@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+    <meta name="theme-color" content="#121f3b" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="넘버 스네이크" />
+    <title>넘버 스네이크</title>
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="./icons/icon-192.svg" />
+    <link rel="stylesheet" href="./styles/main.css" />
+  </head>
+  <body>
+    <div id="app">
+      <div id="screen-start" class="screen active">
+        <div class="panel hero hero-start">
+          <div class="hero-badge">MOBILE ARCADE MATH</div>
+          <p class="eyebrow">숫자 감각 + 반사신경 + 집중력</p>
+          <h1>넘버 스네이크</h1>
+          <p class="subtitle">정답만 먹어 길이를 키우는, 손에 착 붙는 세로형 교육 아케이드</p>
+
+          <div class="hero-stage-strip">
+            <div class="stage-pill stage-pill-1"><span>1</span><strong>초원</strong></div>
+            <div class="stage-pill stage-pill-2"><span>2</span><strong>바다</strong></div>
+            <div class="stage-pill stage-pill-3"><span>3</span><strong>우주</strong></div>
+            <div class="stage-pill stage-pill-4"><span>4</span><strong>사탕나라</strong></div>
+            <div class="stage-pill stage-pill-5"><span>5</span><strong>보물신전</strong></div>
+          </div>
+
+          <div class="hero-preview">
+            <div class="preview-chip">📱 한 손 플레이</div>
+            <div class="preview-chip">🎯 정답 선택 러시</div>
+            <div class="preview-chip">✨ 5개 테마 스테이지</div>
+          </div>
+
+          <div class="tips feature-grid">
+            <div class="feature-card"><span>📲</span><strong>스와이프 조작</strong><small>좌우상하 한 번이면 즉시 반응</small></div>
+            <div class="feature-card"><span>🧠</span><strong>문제 먹기</strong><small>맞는 숫자만 골라 점수와 길이 상승</small></div>
+            <div class="feature-card"><span>🔥</span><strong>콤보 보너스</strong><small>연속 정답으로 고득점 루트 완성</small></div>
+          </div>
+
+          <div class="start-summary-row">
+            <div class="best-score-box">
+              <span class="summary-label">BEST SCORE</span>
+              <strong id="best-score-label">0</strong>
+            </div>
+            <div class="best-score-box accent-blue">
+              <span class="summary-label">CLEAR GOAL</span>
+              <strong>길이 22</strong>
+            </div>
+          </div>
+
+          <div class="start-actions">
+            <button id="start-btn" class="primary">게임 시작</button>
+            <button id="voice-toggle-btn" class="secondary">음성: 켜짐</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="screen-game" class="screen game-screen">
+        <header class="hud panel">
+          <div class="hud-topline">
+            <div>
+              <div class="mini-label">CURRENT STAGE</div>
+              <div id="stage-hero-label" class="stage-hero-label">STAGE 1 · 초원</div>
+            </div>
+            <div id="theme-chip" class="theme-chip">GREEN FIELD</div>
+          </div>
+
+          <div class="hud-row top-row stat-grid">
+            <div class="badge badge-highlight stat-card"><small>SCORE</small><span id="score-label">0</span></div>
+            <div class="badge stat-card"><small>LENGTH</small><span id="length-label">3</span><em>/22</em></div>
+            <div class="badge stat-card"><small>LIVES</small><span id="lives-label">❤️❤️❤️</span></div>
+            <div class="badge stat-card"><small>COMBO</small><span id="combo-label">0</span></div>
+          </div>
+
+          <div class="progress-header">
+            <span>성장 진행도</span>
+            <strong id="progress-text">3 / 22</strong>
+          </div>
+          <div class="progress-wrap">
+            <div id="progress-bar" class="progress-bar"></div>
+          </div>
+
+          <div class="hud-row problem-row">
+            <div class="problem-panel">
+              <div class="mini-label">현재 문제</div>
+              <div id="problem-label" class="problem-text">2 + 3 = □</div>
+            </div>
+            <button id="speak-btn" class="icon-btn speak-btn" title="문제 다시 읽기">🔊</button>
+          </div>
+        </header>
+
+        <main class="game-wrap">
+          <div class="board-shell panel">
+            <div class="board-chrome">
+              <div class="board-dot"></div>
+              <div class="board-dot"></div>
+              <div class="board-dot"></div>
+            </div>
+            <div class="board-stage-caption">
+              <span>ARCADE BOARD</span>
+              <strong id="board-theme-name">초원</strong>
+            </div>
+            <canvas id="game-canvas" width="420" height="420" aria-label="snake math game"></canvas>
+            <div id="status-banner" class="status-banner" aria-live="polite"></div>
+          </div>
+          <div class="legend-strip panel small">
+            <div class="legend-card"><span class="legend-icon">🎯</span><div><strong>정답</strong><small>먹으면 길이와 점수가 올라감</small></div></div>
+            <div class="legend-card"><span class="legend-icon">⚠️</span><div><strong>오답 · 충돌</strong><small>짧아지거나 생명이 줄어듦</small></div></div>
+            <div class="legend-card item-showcase"><span class="legend-icon">✨</span><div><strong>아이템</strong><small>색과 모양으로 빠르게 구분</small></div></div>
+          </div>
+        </main>
+
+        <footer class="controls panel">
+          <button id="pause-btn" class="secondary">일시정지</button>
+          <button id="mute-btn" class="secondary">음소거</button>
+          <button id="restart-btn" class="secondary">현재 단계 재시작</button>
+        </footer>
+      </div>
+
+      <div id="screen-stage-clear" class="screen">
+        <div class="panel hero result-screen clear-screen">
+          <div class="result-badge">STAGE CLEAR</div>
+          <h2>단계 클리어! 🎉</h2>
+          <p id="stage-clear-text">다음 단계로 넘어갑니다.</p>
+          <div class="result-stat-row">
+            <div class="result-stat"><span>현재 점수</span><strong id="stage-clear-score">0</strong></div>
+            <div class="result-stat"><span>다음 테마</span><strong id="stage-clear-theme">바다</strong></div>
+          </div>
+          <button id="next-stage-btn" class="primary">다음 단계</button>
+        </div>
+      </div>
+
+      <div id="screen-game-over" class="screen">
+        <div class="panel hero result-screen over-screen">
+          <div class="result-badge">TRY AGAIN</div>
+          <h2 id="game-over-title">게임 오버</h2>
+          <p id="game-over-text">현재 단계부터 다시 시작할 수 있어요.</p>
+          <div class="result-stat-row">
+            <div class="result-stat"><span>최종 점수</span><strong id="final-score-label">0</strong></div>
+            <div class="result-stat"><span>최고 기록</span><strong id="result-best-score-label">0</strong></div>
+          </div>
+          <button id="retry-btn" class="primary">현재 단계부터 다시</button>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="./src/main.js"></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js').catch(() => {});
+        });
+      }
+    </script>
+  </body>
+</html>
