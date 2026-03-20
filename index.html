@@ -60,47 +60,20 @@
       </div>
 
       <div id="screen-game" class="screen game-screen">
-        <header class="hud panel compact-hud">
-          <div class="hud-micro-row">
-            <div class="micro-stage-wrap">
-              <div id="stage-hero-label" class="stage-hero-label compact-stage">STAGE 1 · 초원</div>
-              <div id="theme-chip" class="theme-chip compact-chip">GREEN FIELD</div>
-            </div>
-            <button id="speak-btn" class="icon-btn speak-btn compact-speak" title="문제 다시 읽기">🔊</button>
+        <header class="hud panel compact-hud minimal-hud">
+          <div class="arcade-stats-row minimal-stats-row">
+            <div class="arcade-stat mini-stat"><span class="arcade-icon">💎</span><strong id="score-label">0</strong></div>
+            <div class="arcade-stat mini-stat"><span class="arcade-icon">❤️</span><strong id="lives-label">❤️❤️❤️</strong></div>
+            <div class="arcade-stat mini-stat"><span class="arcade-icon">🔥</span><strong id="combo-label">0</strong></div>
           </div>
 
-          <div class="arcade-stats-row">
-            <div class="arcade-stat"><span class="arcade-icon">💎</span><strong id="score-label">0</strong></div>
-            <div class="arcade-stat"><span class="arcade-icon">📏</span><strong><span id="length-label">3</span><em>/22</em></strong></div>
-            <div class="arcade-stat"><span class="arcade-icon">❤️</span><strong id="lives-label">❤️❤️❤️</strong></div>
-            <div class="arcade-stat"><span class="arcade-icon">🔥</span><strong id="combo-label">0</strong></div>
-          </div>
-
-          <div class="progress-header compact-progress-header">
-            <span>GROWTH</span>
-            <strong id="progress-text">3 / 22</strong>
-          </div>
-          <div class="progress-wrap compact-progress-wrap">
-            <div id="progress-bar" class="progress-bar"></div>
-          </div>
-
-          <div class="problem-panel arcade-problem-panel">
-            <div class="mini-label">현재 문제</div>
-            <div id="problem-label" class="problem-text">2 + 3 = □</div>
+          <div class="problem-panel arcade-problem-panel centered-problem-panel">
+            <div id="problem-label" class="problem-text centered-problem-text">2 + 3 = □</div>
           </div>
         </header>
 
         <main class="game-wrap expanded-game-wrap">
-          <div class="board-shell panel big-board-shell">
-            <div class="board-chrome">
-              <div class="board-dot"></div>
-              <div class="board-dot"></div>
-              <div class="board-dot"></div>
-            </div>
-            <div class="board-stage-caption compact-board-caption">
-              <span>ARCADE BOARD</span>
-              <strong id="board-theme-name">초원</strong>
-            </div>
+          <div class="board-shell panel big-board-shell clean-board-shell">
             <canvas id="game-canvas" width="420" height="420" aria-label="snake math game"></canvas>
             <div id="status-banner" class="status-banner" aria-live="polite"></div>
           </div>

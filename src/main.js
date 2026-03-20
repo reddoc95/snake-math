@@ -121,7 +121,7 @@ function bindEvents() {
     el.muteBtn.textContent = state.muted ? '음소거 해제' : '음소거';
   });
 
-  el.speakBtn.addEventListener('click', speakProblem);
+  if (el.speakBtn) el.speakBtn.addEventListener('click', speakProblem);
   el.pauseBtn.addEventListener('click', () => {
     state.paused = !state.paused;
     el.pauseBtn.textContent = state.paused ? '계속하기' : '일시정지';
@@ -333,16 +333,16 @@ function updateHud() {
   const progress = Math.min(100, (state.snake.length / TARGET_LENGTH) * 100);
   el.bestScoreLabel.textContent = state.bestScore;
   if (el.stageLabel) el.stageLabel.textContent = `${state.stage} (${theme.name})`;
-  el.stageHeroLabel.textContent = `STAGE ${state.stage} · ${theme.name}`;
-  el.themeChip.textContent = getThemeChipLabel(theme);
-  el.boardThemeName.textContent = theme.name;
+  if (el.stageHeroLabel) el.stageHeroLabel.textContent = `STAGE ${state.stage} · ${theme.name}`;
+  if (el.themeChip) el.themeChip.textContent = getThemeChipLabel(theme);
+  if (el.boardThemeName) el.boardThemeName.textContent = theme.name;
   el.scoreLabel.textContent = state.score;
-  el.lengthLabel.textContent = state.snake.length;
-  el.livesLabel.textContent = '❤️'.repeat(state.lives) + '🖤'.repeat(START_LIVES - state.lives);
+  if (el.lengthLabel) el.lengthLabel.textContent = state.snake.length;
+  el.livesLabel.textContent = '❤️'.repeat(state.lives);
   el.comboLabel.textContent = state.combo;
   el.problemLabel.textContent = state.problem?.display || '';
-  el.progressBar.style.width = `${progress}%`;
-  el.progressText.textContent = `${state.snake.length} / ${TARGET_LENGTH}`;
+  if (el.progressBar) el.progressBar.style.width = `${progress}%`;
+  if (el.progressText) el.progressText.textContent = `${state.snake.length} / ${TARGET_LENGTH}`;
   el.stageClearScore.textContent = state.score;
   el.finalScoreLabel.textContent = state.score;
   el.resultBestScoreLabel.textContent = state.bestScore;
