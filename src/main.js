@@ -91,6 +91,10 @@ const state = {
   particles: [],
   flashUntil: 0,
   flashColor: '#ffffff',
+  celebration: null,
+  correctStampUntil: 0,
+  shakeUntil: 0,
+  shakeStrength: 0,
 };
 
 function init() {
@@ -223,6 +227,30 @@ function setBanner(text, duration = 1800) {
   state.bannerText = text;
   state.bannerUntil = performance.now() + duration;
   el.statusBanner.textContent = text;
+}
+
+function triggerCelebration(type, text, strength = 1) {
+  state.celebration = {
+    type,
+    text,
+    strength,
+    startAt: performance.now(),
+    endAt: performance.now() + 900 + strength * 120,
+  };
+}
+
+function triggerShake(strength = 6, duration = 220) {
+  state.shakeStrength = strength;
+  state.shakeUntil = performance.now() + duration;
+}
+
+function getComboCallout(combo) {
+  if (combo >= 10) return 'UNSTOPPABLE';
+  if (combo >= 8) return 'LEGENDARY';
+  if (combo >= 6) return 'AMAZING';
+  if (combo >= 4) return 'GREAT';
+  if (combo >= 2) return 'NICE';
+  return 'GOOD';
 }
 
 function resetStage(stage, resetScore) {
@@ -405,10 +433,14 @@ function handleCorrect() {
   state.flashUntil = performance.now() + 150;
   state.flashColor = '#ffd43b';
   audio.play('correct');
+  triggerShake(Math.min(12, 3 + state.combo), 180 + state.combo * 12);
   saveBestScore();
   spawnParticles(state.snake[0], '#ffd43b', state.combo > 1 ? 14 : 8);
   if (state.combo >= 3) spawnParticles(state.snake[0], THEMES[state.stage].accent, 12 + state.combo);
-  setBanner(state.combo > 1 ? `정답! 콤보 x${state.combo} (+${gained})` : `정답! (+${gained})`);
+  state.correctStampUntil = performance.now() + 520;
+  const exclamations = '!'.repeat(Math.min(6, state.combo + 1));
+  triggerCelebration('combo', `${state.combo} COMBO${exclamations}`, Math.min(6, state.combo));
+  setBanner(`${getComboCallout(state.combo)} · +${gained}`);
   createProblemSet();
   speakProblem();
 }
@@ -435,6 +467,7 @@ function loseLife(message) {
   state.lives -= 1;
   state.flashUntil = performance.now() + 240;
   state.flashColor = '#ff6b6b';
+  triggerShake(14, 260);
   audio.play(state.lives <= 0 ? 'gameOver' : 'lifeLost');
   spawnParticles(state.snake[0], '#ff6b6b', 18);
   spawnParticles(state.snake[0], '#ffffff', 10);
@@ -518,7 +551,9 @@ function render(now) {
     el.statusBanner.textContent = '';
   }
   const moveProgress = getMoveProgress(now);
+  const shaking = now <= state.shakeUntil;
   ctx.clearRect(0, 0, BOARD_SIZE, BOARD_SIZE);
+  applyScreenShake(now);
   drawBoardBackdrop(now);
   drawGrid();
   drawChoices(now);
@@ -526,7 +561,10 @@ function render(now) {
   drawSnake(now, moveProgress);
   updateAndDrawParticles();
   drawBoardFlash(now);
+  drawCorrectStamp(now);
+  drawCelebration(now);
   if (state.paused && state.screen === 'game') drawOverlay('일시정지');
+  if (shaking) ctx.restore();
 }
 
 function getMoveProgress(now) {
@@ -970,6 +1008,89 @@ function drawHintIcon(cx, cy, pulse) {
   ctx.beginPath();
   ctx.arc(cx, cy, 3.6 + pulse * 0.4, 0, Math.PI * 2);
   ctx.fill();
+  ctx.restore();
+}
+
+function applyScreenShake(now) {
+  if (now > state.shakeUntil) return;
+  const remain = (state.shakeUntil - now) / Math.max(1, state.shakeStrength * 20);
+  const strength = Math.max(0, Math.min(1, remain)) * state.shakeStrength;
+  const dx = (Math.random() - 0.5) * strength;
+  const dy = (Math.random() - 0.5) * strength;
+  ctx.save();
+  ctx.translate(dx, dy);
+}
+
+function drawCorrectStamp(now) {
+  if (now > state.correctStampUntil) return;
+  const progress = 1 - (state.correctStampUntil - now) / 520;
+  const scale = 0.72 + Math.sin(progress * Math.PI) * 0.45;
+  const alpha = 1 - progress;
+  ctx.save();
+  ctx.translate(BOARD_SIZE / 2, BOARD_SIZE / 2 - 30);
+  ctx.scale(scale, scale);
+  ctx.globalAlpha = Math.max(0, alpha);
+  ctx.fillStyle = 'rgba(255,255,255,0.92)';
+  ctx.strokeStyle = '#22c55e';
+  ctx.lineWidth = 8;
+  ctx.beginPath();
+  ctx.arc(0, 0, 54, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+  ctx.strokeStyle = '#16a34a';
+  ctx.lineCap = 'round';
+  ctx.lineWidth = 10;
+  ctx.beginPath();
+  ctx.moveTo(-22, 2);
+  ctx.lineTo(-5, 20);
+  ctx.lineTo(26, -16);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawCelebration(now) {
+  if (!state.celebration || now > state.celebration.endAt) {
+    state.celebration = null;
+    return;
+  }
+  const { text, strength, startAt, endAt } = state.celebration;
+  const total = endAt - startAt;
+  const elapsed = now - startAt;
+  const t = clamp(elapsed / total, 0, 1);
+  const enter = Math.min(1, t / 0.22);
+  const exit = t > 0.72 ? 1 - ((t - 0.72) / 0.28) : 1;
+  const alpha = Math.max(0, Math.min(enter, exit));
+  const pop = 0.72 + Math.sin(Math.min(1, t) * Math.PI) * (0.18 + strength * 0.05);
+  const y = BOARD_SIZE * 0.26 - (1 - alpha) * 24;
+  const accent = THEMES[state.stage].accent;
+
+  ctx.save();
+  ctx.translate(BOARD_SIZE / 2, y);
+  ctx.scale(pop, pop);
+  ctx.globalAlpha = alpha;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.lineJoin = 'round';
+
+  const fontSize = 28 + strength * 4;
+  ctx.font = `900 ${fontSize}px sans-serif`;
+  ctx.lineWidth = 12;
+  ctx.strokeStyle = 'rgba(12,18,38,0.75)';
+  ctx.strokeText(text, 0, 0);
+
+  const fill = ctx.createLinearGradient(-120, -20, 120, 20);
+  fill.addColorStop(0, '#fff7b1');
+  fill.addColorStop(0.45, '#ffffff');
+  fill.addColorStop(1, accent);
+  ctx.fillStyle = fill;
+  ctx.shadowColor = `${accent}bb`;
+  ctx.shadowBlur = 26;
+  ctx.fillText(text, 0, 0);
+
+  ctx.shadowBlur = 0;
+  ctx.font = `900 ${12 + strength * 1.2}px sans-serif`;
+  ctx.fillStyle = 'rgba(255,255,255,0.92)';
+  ctx.fillText(getComboCallout(strength), 0, fontSize * 0.8);
   ctx.restore();
 }
 
