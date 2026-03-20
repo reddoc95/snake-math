@@ -556,7 +556,7 @@ function render(now) {
   }
   const moveProgress = getMoveProgress(now);
   const shaking = now <= state.shakeUntil;
-  ctx.clearRect(0, 0, BOARD_SIZE, BOARD_SIZE);
+  ctx.clearRect(0, 0, BOARD_WIDTH, BOARD_HEIGHT);
   applyScreenShake(now);
   drawBoardBackdrop(now);
   drawGrid();
@@ -579,24 +579,24 @@ function getMoveProgress(now) {
 function drawBoardBackdrop(now) {
   const theme = THEMES[state.stage];
   ctx.save();
-  const bg = ctx.createLinearGradient(0, 0, BOARD_SIZE, BOARD_SIZE);
+  const bg = ctx.createLinearGradient(0, 0, BOARD_WIDTH, BOARD_HEIGHT);
   bg.addColorStop(0, theme.backdropA);
   bg.addColorStop(1, theme.backdropB);
   ctx.fillStyle = bg;
-  roundRect(ctx, 0, 0, BOARD_SIZE, BOARD_SIZE, 26);
+  roundRect(ctx, 0, 0, BOARD_WIDTH, BOARD_HEIGHT, 26);
   ctx.fill();
 
   const glow = ctx.createRadialGradient(BOARD_WIDTH * 0.82, BOARD_HEIGHT * 0.18, 10, BOARD_WIDTH * 0.82, BOARD_HEIGHT * 0.18, BOARD_HEIGHT * 0.46);
   glow.addColorStop(0, theme.boardGlow);
   glow.addColorStop(1, 'rgba(255,255,255,0)');
   ctx.fillStyle = glow;
-  roundRect(ctx, 0, 0, BOARD_SIZE, BOARD_SIZE, 26);
+  roundRect(ctx, 0, 0, BOARD_WIDTH, BOARD_HEIGHT, 26);
   ctx.fill();
 
   for (let i = 0; i < 18; i += 1) {
     const size = 18 + ((i * 17) % 26);
-    const x = (i * 63 + now * 0.01 * (i % 2 === 0 ? 1 : -1)) % BOARD_SIZE;
-    const y = (i * 91 + now * 0.008 * (i % 3 === 0 ? 1 : -1)) % BOARD_SIZE;
+    const x = (i * 63 + now * 0.01 * (i % 2 === 0 ? 1 : -1) + BOARD_WIDTH) % BOARD_WIDTH;
+    const y = (i * 91 + now * 0.008 * (i % 3 === 0 ? 1 : -1) + BOARD_HEIGHT) % BOARD_HEIGHT;
     ctx.fillStyle = i % 2 === 0 ? 'rgba(255,255,255,0.03)' : 'rgba(255,255,255,0.018)';
     ctx.beginPath();
     ctx.arc(x, y, size, 0, Math.PI * 2);
@@ -613,8 +613,8 @@ function drawStageDeco(theme, now) {
   ctx.strokeStyle = theme.accent;
   ctx.fillStyle = theme.accent;
   for (let i = 0; i < 7; i += 1) {
-    const baseX = ((i * 71) + now * 0.012 * (i % 2 === 0 ? 1 : -1) + BOARD_SIZE) % BOARD_SIZE;
-    const baseY = ((i * 53) + now * 0.009 * (i % 3 === 0 ? -1 : 1) + BOARD_SIZE) % BOARD_SIZE;
+    const baseX = ((i * 71) + now * 0.012 * (i % 2 === 0 ? 1 : -1) + BOARD_WIDTH) % BOARD_WIDTH;
+    const baseY = ((i * 53) + now * 0.009 * (i % 3 === 0 ? -1 : 1) + BOARD_HEIGHT) % BOARD_HEIGHT;
     switch (theme.deco) {
       case 'leaf':
         ctx.beginPath();
@@ -673,7 +673,7 @@ function drawBoardFlash(now) {
   ctx.save();
   ctx.globalAlpha = Math.max(0, alpha) * 0.24;
   ctx.fillStyle = state.flashColor;
-  roundRect(ctx, 0, 0, BOARD_SIZE, BOARD_SIZE, 26);
+  roundRect(ctx, 0, 0, BOARD_WIDTH, BOARD_HEIGHT, 26);
   ctx.fill();
   ctx.restore();
 }
@@ -1163,7 +1163,7 @@ function accidentSafe(color) {
 function drawOverlay(text) {
   ctx.save();
   ctx.fillStyle = 'rgba(0,0,0,0.35)';
-  ctx.fillRect(0, 0, BOARD_SIZE, BOARD_SIZE);
+  ctx.fillRect(0, 0, BOARD_WIDTH, BOARD_HEIGHT);
   ctx.fillStyle = '#fff';
   ctx.font = 'bold 32px sans-serif';
   ctx.textAlign = 'center';
