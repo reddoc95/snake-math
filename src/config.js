@@ -1,6 +1,10 @@
-export const GRID_SIZE = 14;
+export const GRID_COLS = 14;
+export const GRID_ROWS = 20;
+export const GRID_SIZE = GRID_COLS;
 export const CELL_SIZE = 30;
-export const BOARD_SIZE = GRID_SIZE * CELL_SIZE;
+export const BOARD_WIDTH = GRID_COLS * CELL_SIZE;
+export const BOARD_HEIGHT = GRID_ROWS * CELL_SIZE;
+export const BOARD_SIZE = BOARD_WIDTH;
 
 export const START_LENGTH = 3;
 export const MIN_LENGTH = 2;

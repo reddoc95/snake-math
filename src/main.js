@@ -1,7 +1,11 @@
 import {
   BOARD_SIZE,
+  BOARD_WIDTH,
+  BOARD_HEIGHT,
   CELL_SIZE,
   GRID_SIZE,
+  GRID_COLS,
+  GRID_ROWS,
   ITEM_TYPES,
   MIN_LENGTH,
   SCORE,
@@ -58,8 +62,8 @@ const el = {
 };
 
 const ctx = el.canvas.getContext('2d');
-el.canvas.width = BOARD_SIZE;
-el.canvas.height = BOARD_SIZE;
+el.canvas.width = BOARD_WIDTH;
+el.canvas.height = BOARD_HEIGHT;
 
 const audio = new AudioSystem();
 const items = new ItemSystem();
@@ -303,14 +307,14 @@ function placeChoices() {
 
 function randomEmptyCell(occupied) {
   for (let i = 0; i < 300; i += 1) {
-    const pos = { x: randInt(0, GRID_SIZE - 1), y: randInt(0, GRID_SIZE - 1) };
+    const pos = { x: randInt(0, GRID_COLS - 1), y: randInt(0, GRID_ROWS - 1) };
     if (occupied.has(keyOf(pos))) continue;
     if (state.snake.some((segment) => Math.abs(segment.x - pos.x) + Math.abs(segment.y - pos.y) <= 1)) continue;
     return pos;
   }
 
-  for (let y = 0; y < GRID_SIZE; y += 1) {
-    for (let x = 0; x < GRID_SIZE; x += 1) {
+  for (let y = 0; y < GRID_ROWS; y += 1) {
+    for (let x = 0; x < GRID_COLS; x += 1) {
       const pos = { x, y };
       if (occupied.has(keyOf(pos))) continue;
       if (state.snake.some((segment) => Math.abs(segment.x - pos.x) + Math.abs(segment.y - pos.y) <= 1)) continue;
@@ -318,8 +322,8 @@ function randomEmptyCell(occupied) {
     }
   }
 
-  for (let y = 0; y < GRID_SIZE; y += 1) {
-    for (let x = 0; x < GRID_SIZE; x += 1) {
+  for (let y = 0; y < GRID_ROWS; y += 1) {
+    for (let x = 0; x < GRID_COLS; x += 1) {
       const pos = { x, y };
       if (!occupied.has(keyOf(pos))) return pos;
     }
@@ -392,8 +396,8 @@ function step(now) {
   state.direction = state.pendingDirection;
   const head = state.snake[0];
   const next = {
-    x: (head.x + state.direction.x + GRID_SIZE) % GRID_SIZE,
-    y: (head.y + state.direction.y + GRID_SIZE) % GRID_SIZE,
+    x: (head.x + state.direction.x + GRID_COLS) % GRID_COLS,
+    y: (head.y + state.direction.y + GRID_ROWS) % GRID_ROWS,
   };
 
   const choice = state.choicePositions.find((entry) => positionsEqual(entry.pos, next));
@@ -582,7 +586,7 @@ function drawBoardBackdrop(now) {
   roundRect(ctx, 0, 0, BOARD_SIZE, BOARD_SIZE, 26);
   ctx.fill();
 
-  const glow = ctx.createRadialGradient(BOARD_SIZE * 0.82, BOARD_SIZE * 0.18, 10, BOARD_SIZE * 0.82, BOARD_SIZE * 0.18, BOARD_SIZE * 0.46);
+  const glow = ctx.createRadialGradient(BOARD_WIDTH * 0.82, BOARD_HEIGHT * 0.18, 10, BOARD_WIDTH * 0.82, BOARD_HEIGHT * 0.18, BOARD_HEIGHT * 0.46);
   glow.addColorStop(0, theme.boardGlow);
   glow.addColorStop(1, 'rgba(255,255,255,0)');
   ctx.fillStyle = glow;
@@ -679,15 +683,18 @@ function drawGrid() {
   ctx.save();
   ctx.strokeStyle = theme.gridColor;
   ctx.lineWidth = 1;
-  for (let i = 0; i <= GRID_SIZE; i += 1) {
+  for (let i = 0; i <= GRID_COLS; i += 1) {
     const p = i * CELL_SIZE;
     ctx.beginPath();
     ctx.moveTo(p, 0);
-    ctx.lineTo(p, BOARD_SIZE);
+    ctx.lineTo(p, BOARD_HEIGHT);
     ctx.stroke();
+  }
+  for (let i = 0; i <= GRID_ROWS; i += 1) {
+    const p = i * CELL_SIZE;
     ctx.beginPath();
     ctx.moveTo(0, p);
-    ctx.lineTo(BOARD_SIZE, p);
+    ctx.lineTo(BOARD_WIDTH, p);
     ctx.stroke();
   }
   ctx.restore();
@@ -804,8 +811,8 @@ function getVisualHeadDirection(progress) {
 
 function interpolateSegment(from, to, progress) {
   return {
-    x: lerpWrapped(from.x, to.x, progress, GRID_SIZE),
-    y: lerpWrapped(from.y, to.y, progress, GRID_SIZE),
+    x: lerpWrapped(from.x, to.x, progress, GRID_COLS),
+    y: lerpWrapped(from.y, to.y, progress, GRID_ROWS),
   };
 }
 
@@ -1027,7 +1034,7 @@ function drawCorrectStamp(now) {
   const scale = 0.78 + Math.sin(progress * Math.PI) * 0.52;
   const alpha = 1 - progress;
   ctx.save();
-  ctx.translate(BOARD_SIZE / 2, BOARD_SIZE / 2 - 10);
+  ctx.translate(BOARD_WIDTH / 2, BOARD_HEIGHT / 2 - 10);
   ctx.scale(scale, scale);
   ctx.globalAlpha = Math.max(0, alpha);
 
@@ -1086,12 +1093,12 @@ function drawCelebration(now) {
   const exit = t > 0.74 ? 1 - ((t - 0.74) / 0.26) : 1;
   const alpha = Math.max(0, Math.min(enter, exit));
   const pop = 0.82 + Math.sin(Math.min(1, t) * Math.PI) * (0.26 + strength * 0.06);
-  const y = BOARD_SIZE * 0.23 - (1 - alpha) * 28;
+  const y = BOARD_HEIGHT * 0.23 - (1 - alpha) * 28;
   const accent = THEMES[state.stage].accent;
   const label = getComboCallout(strength);
 
   ctx.save();
-  ctx.translate(BOARD_SIZE / 2, y);
+  ctx.translate(BOARD_WIDTH / 2, y);
   ctx.scale(pop, pop);
   ctx.globalAlpha = alpha;
 
@@ -1161,7 +1168,7 @@ function drawOverlay(text) {
   ctx.font = 'bold 32px sans-serif';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.fillText(text, BOARD_SIZE / 2, BOARD_SIZE / 2);
+  ctx.fillText(text, BOARD_WIDTH / 2, BOARD_HEIGHT / 2);
   ctx.restore();
 }
 

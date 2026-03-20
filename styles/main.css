@@ -140,7 +140,7 @@ small, em { font-style: normal; }
 .game-wrap { min-height: 0; display: grid; grid-template-rows: minmax(0, 1fr); gap: 4px; }
 .board-shell { min-height: 0; height: 100%; padding: 4px; display: grid; grid-template-rows: minmax(0, 1fr) auto; gap: 4px; background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03)); }
 .clean-board-shell { padding: 4px; }
-canvas { width: min(100%, calc(100svh - 126px)); max-width: 100%; aspect-ratio: 1 / 1; border-radius: 20px; display: block; margin: 0 auto; background: #d4f4d0; border: 1px solid rgba(255,255,255,0.1); box-shadow: inset 0 1px 0 rgba(255,255,255,0.14), 0 16px 40px rgba(0,0,0,0.3); touch-action: none; }
+canvas { width: min(100%, calc((100svh - 126px) * 0.7)); height: calc(100svh - 126px); max-width: 100%; max-height: calc(100svh - 126px); aspect-ratio: 14 / 20; border-radius: 20px; display: block; margin: 0 auto; background: #d4f4d0; border: 1px solid rgba(255,255,255,0.1); box-shadow: inset 0 1px 0 rgba(255,255,255,0.14), 0 16px 40px rgba(0,0,0,0.3); touch-action: none; }
 .status-banner { min-height: 18px; display: flex; align-items: center; justify-content: center; text-align: center; font-weight: 900; font-size: 0.76rem; color: #ffd8a8; text-shadow: 0 0 16px rgba(255,216,168,0.3); }
 .compact-controls { padding: 5px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
 .compact-controls button { min-height: 36px; font-weight: 800; font-size: 0.96rem; }
@@ -178,5 +178,5 @@ canvas { width: min(100%, calc(100svh - 126px)); max-width: 100%; aspect-ratio: 
   .arcade-stat { padding: 6px 4px; }
   .arcade-stat strong { font-size: 0.82rem; }
   .problem-text { font-size: 1.74rem; }
-  canvas { width: min(100%, calc(100svh - 118px)); }
+  canvas { width: min(100%, calc((100svh - 118px) * 0.7)); height: calc(100svh - 118px); max-height: calc(100svh - 118px); }
 }
