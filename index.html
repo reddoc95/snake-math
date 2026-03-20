@@ -60,64 +60,56 @@
       </div>
 
       <div id="screen-game" class="screen game-screen">
-        <header class="hud panel">
-          <div class="hud-topline">
-            <div>
-              <div class="mini-label">CURRENT STAGE</div>
-              <div id="stage-hero-label" class="stage-hero-label">STAGE 1 · 초원</div>
+        <header class="hud panel compact-hud">
+          <div class="hud-micro-row">
+            <div class="micro-stage-wrap">
+              <div id="stage-hero-label" class="stage-hero-label compact-stage">STAGE 1 · 초원</div>
+              <div id="theme-chip" class="theme-chip compact-chip">GREEN FIELD</div>
             </div>
-            <div id="theme-chip" class="theme-chip">GREEN FIELD</div>
+            <button id="speak-btn" class="icon-btn speak-btn compact-speak" title="문제 다시 읽기">🔊</button>
           </div>
 
-          <div class="hud-row top-row stat-grid">
-            <div class="badge badge-highlight stat-card"><small>SCORE</small><span id="score-label">0</span></div>
-            <div class="badge stat-card"><small>LENGTH</small><span id="length-label">3</span><em>/22</em></div>
-            <div class="badge stat-card"><small>LIVES</small><span id="lives-label">❤️❤️❤️</span></div>
-            <div class="badge stat-card"><small>COMBO</small><span id="combo-label">0</span></div>
+          <div class="arcade-stats-row">
+            <div class="arcade-stat"><span class="arcade-icon">💎</span><strong id="score-label">0</strong></div>
+            <div class="arcade-stat"><span class="arcade-icon">📏</span><strong><span id="length-label">3</span><em>/22</em></strong></div>
+            <div class="arcade-stat"><span class="arcade-icon">❤️</span><strong id="lives-label">❤️❤️❤️</strong></div>
+            <div class="arcade-stat"><span class="arcade-icon">🔥</span><strong id="combo-label">0</strong></div>
           </div>
 
-          <div class="progress-header">
-            <span>성장 진행도</span>
+          <div class="progress-header compact-progress-header">
+            <span>GROWTH</span>
             <strong id="progress-text">3 / 22</strong>
           </div>
-          <div class="progress-wrap">
+          <div class="progress-wrap compact-progress-wrap">
             <div id="progress-bar" class="progress-bar"></div>
           </div>
 
-          <div class="hud-row problem-row">
-            <div class="problem-panel">
-              <div class="mini-label">현재 문제</div>
-              <div id="problem-label" class="problem-text">2 + 3 = □</div>
-            </div>
-            <button id="speak-btn" class="icon-btn speak-btn" title="문제 다시 읽기">🔊</button>
+          <div class="problem-panel arcade-problem-panel">
+            <div class="mini-label">현재 문제</div>
+            <div id="problem-label" class="problem-text">2 + 3 = □</div>
           </div>
         </header>
 
-        <main class="game-wrap">
-          <div class="board-shell panel">
+        <main class="game-wrap expanded-game-wrap">
+          <div class="board-shell panel big-board-shell">
             <div class="board-chrome">
               <div class="board-dot"></div>
               <div class="board-dot"></div>
               <div class="board-dot"></div>
             </div>
-            <div class="board-stage-caption">
+            <div class="board-stage-caption compact-board-caption">
               <span>ARCADE BOARD</span>
               <strong id="board-theme-name">초원</strong>
             </div>
             <canvas id="game-canvas" width="420" height="420" aria-label="snake math game"></canvas>
             <div id="status-banner" class="status-banner" aria-live="polite"></div>
           </div>
-          <div class="legend-strip panel small">
-            <div class="legend-card"><span class="legend-icon">🎯</span><div><strong>정답</strong><small>먹으면 길이와 점수가 올라감</small></div></div>
-            <div class="legend-card"><span class="legend-icon">⚠️</span><div><strong>오답 · 충돌</strong><small>짧아지거나 생명이 줄어듦</small></div></div>
-            <div class="legend-card item-showcase"><span class="legend-icon">✨</span><div><strong>아이템</strong><small>색과 모양으로 빠르게 구분</small></div></div>
-          </div>
         </main>
 
-        <footer class="controls panel">
-          <button id="pause-btn" class="secondary">일시정지</button>
-          <button id="mute-btn" class="secondary">음소거</button>
-          <button id="restart-btn" class="secondary">현재 단계 재시작</button>
+        <footer class="controls panel compact-controls">
+          <button id="pause-btn" class="secondary">⏸</button>
+          <button id="mute-btn" class="secondary">🔇</button>
+          <button id="restart-btn" class="secondary">↺</button>
         </footer>
       </div>
 

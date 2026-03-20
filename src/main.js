@@ -1024,27 +1024,52 @@ function applyScreenShake(now) {
 function drawCorrectStamp(now) {
   if (now > state.correctStampUntil) return;
   const progress = 1 - (state.correctStampUntil - now) / 520;
-  const scale = 0.72 + Math.sin(progress * Math.PI) * 0.45;
+  const scale = 0.78 + Math.sin(progress * Math.PI) * 0.52;
   const alpha = 1 - progress;
   ctx.save();
-  ctx.translate(BOARD_SIZE / 2, BOARD_SIZE / 2 - 30);
+  ctx.translate(BOARD_SIZE / 2, BOARD_SIZE / 2 - 10);
   ctx.scale(scale, scale);
   ctx.globalAlpha = Math.max(0, alpha);
-  ctx.fillStyle = 'rgba(255,255,255,0.92)';
-  ctx.strokeStyle = '#22c55e';
-  ctx.lineWidth = 8;
-  ctx.beginPath();
-  ctx.arc(0, 0, 54, 0, Math.PI * 2);
+
+  const bg = ctx.createLinearGradient(-120, -40, 120, 40);
+  bg.addColorStop(0, '#fff9b8');
+  bg.addColorStop(0.5, '#ffffff');
+  bg.addColorStop(1, THEMES[state.stage].accent);
+  ctx.fillStyle = bg;
+  ctx.strokeStyle = 'rgba(12,18,38,0.8)';
+  ctx.lineWidth = 10;
+  roundRect(ctx, -120, -46, 240, 92, 30);
   ctx.fill();
   ctx.stroke();
-  ctx.strokeStyle = '#16a34a';
-  ctx.lineCap = 'round';
-  ctx.lineWidth = 10;
+
+  ctx.fillStyle = 'rgba(255,255,255,0.38)';
+  roundRect(ctx, -104, -34, 208, 16, 10);
+  ctx.fill();
+
+  ctx.fillStyle = '#16a34a';
   ctx.beginPath();
-  ctx.moveTo(-22, 2);
-  ctx.lineTo(-5, 20);
-  ctx.lineTo(26, -16);
+  ctx.arc(-66, 0, 24, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = '#ffffff';
+  ctx.lineCap = 'round';
+  ctx.lineWidth = 7;
+  ctx.beginPath();
+  ctx.moveTo(-76, 0);
+  ctx.lineTo(-67, 10);
+  ctx.lineTo(-52, -9);
   ctx.stroke();
+
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.lineJoin = 'round';
+  ctx.font = '900 34px sans-serif';
+  ctx.lineWidth = 10;
+  ctx.strokeStyle = 'rgba(12,18,38,0.78)';
+  ctx.strokeText('CORRECT!', 24, 0);
+  ctx.fillStyle = '#ffffff';
+  ctx.shadowColor = `${THEMES[state.stage].accent}cc`;
+  ctx.shadowBlur = 22;
+  ctx.fillText('CORRECT!', 24, 0);
   ctx.restore();
 }
 
@@ -1057,41 +1082,75 @@ function drawCelebration(now) {
   const total = endAt - startAt;
   const elapsed = now - startAt;
   const t = clamp(elapsed / total, 0, 1);
-  const enter = Math.min(1, t / 0.22);
-  const exit = t > 0.72 ? 1 - ((t - 0.72) / 0.28) : 1;
+  const enter = Math.min(1, t / 0.18);
+  const exit = t > 0.74 ? 1 - ((t - 0.74) / 0.26) : 1;
   const alpha = Math.max(0, Math.min(enter, exit));
-  const pop = 0.72 + Math.sin(Math.min(1, t) * Math.PI) * (0.18 + strength * 0.05);
-  const y = BOARD_SIZE * 0.26 - (1 - alpha) * 24;
+  const pop = 0.82 + Math.sin(Math.min(1, t) * Math.PI) * (0.26 + strength * 0.06);
+  const y = BOARD_SIZE * 0.23 - (1 - alpha) * 28;
   const accent = THEMES[state.stage].accent;
+  const label = getComboCallout(strength);
 
   ctx.save();
   ctx.translate(BOARD_SIZE / 2, y);
   ctx.scale(pop, pop);
   ctx.globalAlpha = alpha;
+
+  const width = 260 + strength * 12;
+  const height = 118 + strength * 4;
+  const bg = ctx.createLinearGradient(-width / 2, -height / 2, width / 2, height / 2);
+  bg.addColorStop(0, '#fff4a8');
+  bg.addColorStop(0.38, '#ffffff');
+  bg.addColorStop(1, accent);
+  ctx.fillStyle = bg;
+  ctx.strokeStyle = 'rgba(12,18,38,0.82)';
+  ctx.lineWidth = 12;
+  roundRect(ctx, -width / 2, -height / 2, width, height, 34);
+  ctx.fill();
+  ctx.stroke();
+
+  ctx.fillStyle = 'rgba(255,255,255,0.34)';
+  roundRect(ctx, -width / 2 + 18, -height / 2 + 14, width - 36, 18, 10);
+  ctx.fill();
+
+  drawBurst(accidentSafe(accent), strength);
+
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   ctx.lineJoin = 'round';
-
-  const fontSize = 28 + strength * 4;
-  ctx.font = `900 ${fontSize}px sans-serif`;
+  ctx.font = `900 ${36 + strength * 5}px sans-serif`;
   ctx.lineWidth = 12;
-  ctx.strokeStyle = 'rgba(12,18,38,0.75)';
-  ctx.strokeText(text, 0, 0);
-
-  const fill = ctx.createLinearGradient(-120, -20, 120, 20);
-  fill.addColorStop(0, '#fff7b1');
-  fill.addColorStop(0.45, '#ffffff');
-  fill.addColorStop(1, accent);
-  ctx.fillStyle = fill;
-  ctx.shadowColor = `${accent}bb`;
-  ctx.shadowBlur = 26;
-  ctx.fillText(text, 0, 0);
+  ctx.strokeStyle = 'rgba(12,18,38,0.8)';
+  ctx.strokeText(text, 0, -8);
+  ctx.fillStyle = '#ffffff';
+  ctx.shadowColor = `${accent}cc`;
+  ctx.shadowBlur = 30;
+  ctx.fillText(text, 0, -8);
 
   ctx.shadowBlur = 0;
-  ctx.font = `900 ${12 + strength * 1.2}px sans-serif`;
-  ctx.fillStyle = 'rgba(255,255,255,0.92)';
-  ctx.fillText(getComboCallout(strength), 0, fontSize * 0.8);
+  ctx.font = `900 ${16 + strength * 1.5}px sans-serif`;
+  ctx.fillStyle = '#182033';
+  ctx.fillText(label, 0, 32 + strength * 2);
   ctx.restore();
+}
+
+function drawBurst(accent, strength) {
+  ctx.save();
+  ctx.strokeStyle = accent;
+  ctx.lineWidth = 4;
+  for (let i = 0; i < 10; i += 1) {
+    const angle = (Math.PI * 2 * i) / 10;
+    const inner = 88 + strength * 4;
+    const outer = 110 + strength * 8;
+    ctx.beginPath();
+    ctx.moveTo(Math.cos(angle) * inner, Math.sin(angle) * inner);
+    ctx.lineTo(Math.cos(angle) * outer, Math.sin(angle) * outer);
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+function accidentSafe(color) {
+  return color || '#ffffff';
 }
 
 function drawOverlay(text) {
